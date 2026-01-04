@@ -14,7 +14,7 @@ public class SimpleHttpClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    
+
     private String host;
 
     public SimpleHttpClient() {
@@ -24,17 +24,22 @@ public class SimpleHttpClient {
         this.objectMapper = new ObjectMapper();
     }
 
+    public SimpleHttpClient(String host) {
+        this();
+        this.host = host;
+    }
+
     public void setHost(String host) {
         this.host = host;
     }
 
-    public String get() throws IOException, InterruptedException {
-        return get(null);
+    public String get(String endpoint) throws IOException, InterruptedException {
+        return get(endpoint, null);
     }
 
-    public String get(Map<String, String> headers) throws IOException, InterruptedException {
+    public String get(String endpoint, Map<String, String> headers) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(this.host))
+                .uri(URI.create(this.host + endpoint))
                 .GET();
 
         applyHeaders(builder, headers);
@@ -44,22 +49,23 @@ public class SimpleHttpClient {
         return response.body();
     }
 
-    public String post() throws IOException, InterruptedException {
-        return post(null, null);
+    public String post(String endpoint) throws IOException, InterruptedException {
+        return post(endpoint, null, null);
     }
 
-    public String post(Map<String, String> body) throws IOException, InterruptedException {
-        return post(null, body);
+    public String post(String endpoint, Map<String, String> body) throws IOException, InterruptedException {
+        return post(endpoint, null, body);
     }
 
-    public String post(Map<String, String> headers, Map<String, String> body) throws IOException, InterruptedException {
+    public String post(String endpoint, Map<String, String> headers, Map<String, String> body)
+            throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(this.host));
+                .uri(URI.create(this.host + endpoint));
 
         if (body != null) {
             String jsonBody = objectMapper.writeValueAsString(body);
             builder.header("Content-Type", "application/json")
-                   .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody));
         } else {
             builder.POST(HttpRequest.BodyPublishers.noBody());
         }
@@ -71,22 +77,23 @@ public class SimpleHttpClient {
         return response.body();
     }
 
-    public String put() throws IOException, InterruptedException {
-        return put(null, null);
+    public String put(String endpoint) throws IOException, InterruptedException {
+        return put(endpoint, null, null);
     }
 
-    public String put(Map<String, String> body) throws IOException, InterruptedException {
-        return put(null, body);
+    public String put(String endpoint, Map<String, String> body) throws IOException, InterruptedException {
+        return put(endpoint, null, body);
     }
 
-    public String put(Map<String, String> headers, Map<String, String> body) throws IOException, InterruptedException {
+    public String put(String endpoint, Map<String, String> headers, Map<String, String> body)
+            throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(this.host));
+                .uri(URI.create(this.host + endpoint));
 
         if (body != null) {
             String jsonBody = objectMapper.writeValueAsString(body);
             builder.header("Content-Type", "application/json")
-                   .PUT(HttpRequest.BodyPublishers.ofString(jsonBody));
+                    .PUT(HttpRequest.BodyPublishers.ofString(jsonBody));
         } else {
             builder.PUT(HttpRequest.BodyPublishers.noBody());
         }
@@ -98,13 +105,13 @@ public class SimpleHttpClient {
         return response.body();
     }
 
-    public String delete() throws IOException, InterruptedException {
-        return delete(null);
+    public String delete(String endpoint) throws IOException, InterruptedException {
+        return delete(endpoint, null);
     }
 
-    public String delete(Map<String, String> headers) throws IOException, InterruptedException {
+    public String delete(String endpoint, Map<String, String> headers) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(this.host))
+                .uri(URI.create(this.host + endpoint))
                 .DELETE();
 
         applyHeaders(builder, headers);
